@@ -8,13 +8,11 @@ function App() {
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <main className="flex-1 ml-64 p-6">
+      <main className="flex-1 p-6 lg:ml-64">
         <Routes>
-
           <Route path="/" element={<MapView/>} />
           <Route path="/profile" element={<Profile/>} />
           <Route path="/visited" element={<Visited/>} />
-         
         </Routes>
       </main>
     </div>
