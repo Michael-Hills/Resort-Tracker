@@ -1,3 +1,7 @@
+import { Link } from "react-router-dom";
+import { Mountain, Map, User, LogOut } from "lucide-react";
+
+
 function Navbar() {
   return (
     <nav className="bg-sky-100 shadow-md p-4">
