@@ -1,26 +1,28 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Mountain, Map, User, LogOut, Search, Menu } from "lucide-react";
+import Button from "./button";
+
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
-      <button 
+      <Button 
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-[1000] p-2 bg-white rounded-md shadow-lg"
       >
         <Menu className="w-6 h-6" />
-      </button>
+      </Button>
 
       <aside className={`
-        w-64 bg-white h-screen shadow-lg fixed top-0 z-40 flex flex-col p-4
-        transition-transform duration-300 ease-in-out
+        w-48 lg:w-64 bg-white h-screen shadow-lg fixed top-0 z-[999] flex flex-col p-4
+        lg:pt-4 pt-16 transition-transform duration-300 ease-in-out
         lg:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <h2 className="text-2xl font-bold mb-6">Resort Tracker</h2>
+        <h2 className="text-xl lg:text-2xl font-bold mb-6">Resort Tracker</h2>
 
         <div className="relative mb-4">
           <input
@@ -48,10 +50,14 @@ export default function Sidebar() {
           </Link>
         </nav>
 
-        <button className="flex items-center gap-2 text-red-500 hover:text-red-600 mt-auto">
-          <LogOut className="w-5 h-5" />
-          Logout
-        </button>
+        <Button 
+          variant="danger"
+          className="mt-auto"
+          >
+            <LogOut className="w-5 h-5" />
+            Logout
+        </Button>
+
       </aside>
     </>
   );
