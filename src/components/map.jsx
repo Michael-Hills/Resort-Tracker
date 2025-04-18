@@ -61,7 +61,7 @@ export default function Map() {
   const [activeRegion, setActiveRegion] = useState('world');
   return (
     <div className="h-full w-full relative">
-      <div className="absolute top-4 right-4 z-[10000000] flex gap-2">
+      <div className="absolute top-4 right-4 z-[1] flex gap-2">
         <Button 
           variant={activeRegion === 'world' ? 'primary' : 'default'}
           onClick={() => setActiveRegion('world')}
@@ -85,7 +85,7 @@ export default function Map() {
       <MapContainer 
         center={regions.world.center} 
         zoom={regions.world.zoom} 
-        className="h-full w-full"
+        className="h-full w-full z-[0]"
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
         zoomControl={false}
@@ -99,6 +99,7 @@ export default function Map() {
         minZoom= {2}
         noWrap={true}
         bounds={[[-90, -180], [90, 180]]}
+        zIndex={1}
         />
                 
         {skiResorts.map((resort) => (

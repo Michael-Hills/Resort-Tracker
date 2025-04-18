@@ -11,13 +11,13 @@ export default function Sidebar() {
     <>
       <Button 
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-[1000] p-2 bg-white rounded-md shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-[3] p-2 bg-white rounded-md shadow-lg"
       >
         <Menu className="w-6 h-6" />
       </Button>
 
       <aside className={`
-        w-48 lg:w-64 bg-white h-screen shadow-lg fixed top-0 z-[999] flex flex-col p-4
+        w-48 lg:w-64 bg-white h-screen shadow-lg fixed top-0 z-[2] flex flex-col p-4
         lg:pt-4 pt-16 transition-transform duration-300 ease-in-out
         lg:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
