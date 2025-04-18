@@ -28,11 +28,11 @@ const regions = {
     zoom: 2
   },
   europe: {
-    center: [54, 15],
-    zoom: 4
+    center: [45, 15],
+    zoom: window.innerWidth < 640 ? 4 : 5
   },
   asia: {
-    center: [34, 100],
+    center: [40, 130],
     zoom: 4
   }
 };

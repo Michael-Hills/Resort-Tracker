@@ -22,7 +22,63 @@ const mockResorts = [
     position: [40.6461, -111.4980],
     country: "USA",
     runs: 341
-  }
+  },
+  {
+    id: 'zermatt',
+    name: "Zermatt",
+    position: [46.0207, 7.7491],
+    country: "Switzerland",
+    runs: 360
+  },
+  {
+    id: 'chamonix',
+    name: "Chamonix",
+    position: [45.9237, 6.8694],
+    country: "France",
+    runs: 169
+  },
+  {
+    id: 'stmoritz',
+    name: "St. Moritz",
+    position: [46.4908, 9.8355],
+    country: "Switzerland",
+    runs: 350
+  },
+  {
+    id: 'valthorens',
+    name: "Val Thorens",
+    position: [45.2982, 6.5800],
+    country: "France",
+    runs: 335
+  },
+  {
+    id: 'kitzbuehel',
+    name: "Kitzbühel",
+    position: [47.4492, 12.3919],
+    country: "Austria",
+    runs: 233
+  },
+  {
+    id: 'niseko',
+    name: "Niseko United",
+    position: [42.8648, 140.6874],
+    country: "Japan",
+    runs: 61
+  },
+  {
+    id: 'hakuba',
+    name: "Hakuba Valley",
+    position: [36.6984, 137.8320],
+    country: "Japan",
+    runs: 200
+  },
+  {
+    id: 'yongpyong',
+    name: "Yongpyong Resort",
+    position: [37.6435, 128.6799],
+    country: "South Korea",
+    runs: 28
+  },
 ];
 
 const mockHolidays = [
