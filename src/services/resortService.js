@@ -108,3 +108,15 @@ export async function searchResorts(query) {
     resort.country.toLowerCase().includes(query.toLowerCase())
   );
 }
+
+export function calculateStats(visitedResorts) {
+  const countries = new Set(visitedResorts.map(r => r.country));
+  const totalRuns = visitedResorts.reduce((sum, r) => sum + r.runs, 0);
+  
+  return {
+    resortsVisited: visitedResorts.length,
+    countries: countries.size,
+    totalRuns,
+    favoriteResort: visitedResorts.length > 0 ? visitedResorts[0].name : 'None'
+  };
+}

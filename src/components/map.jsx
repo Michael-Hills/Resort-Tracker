@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import Button from './button'
-import { getVisitedResorts } from '../services/resortService'
+import { useResorts } from '../context/resortContext'
 
 
 // Remove default marker icons
@@ -50,17 +50,18 @@ function MapController({ region }) {
 }
 
 export default function Map() {
-  const [resorts, setResorts] = useState([]);
+
+  const { resorts, addHoliday } = useResorts();
   const [activeRegion, setActiveRegion] = useState('world');
 
-
-  useEffect(() => {
-    async function loadResorts() {
-      const data = await getVisitedResorts();
-      setResorts(data);
-    }
-    loadResorts();
-  }, []);
+  const handleAddHoliday = async (resortId) => {
+    await addHoliday({
+      resortId,
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: new Date().toISOString().split('T')[0],
+      notes: 'New visit'
+    });
+  };
 
   return (
     <div className="h-full w-full relative">
@@ -105,21 +106,30 @@ export default function Map() {
         zIndex={1}
         />
                 
-        {resorts.map((resorts) => (
-          <Marker 
-            key={resorts.name}
-            position={resorts.position}
-            icon={resorts.visited ? visitedIcon : unvisitedIcon}
-          >
-            <Popup>
-              <div className="p-2">
-                <h3 className="font-bold">{resorts.name}</h3>
-                <p className="text-sm text-gray-600">
-                  Status: {resorts.visited ? 'Visited' : 'Not visited'}
-                </p>
-              </div>
-            </Popup>
-          </Marker>
+        {resorts.map((resort) => (
+        <Marker 
+          key={resort.name}
+          position={resort.position}
+          icon={resort.visited ? visitedIcon : unvisitedIcon}
+        >
+          <Popup>
+            <div className="p-2">
+              <h3 className="font-bold">{resort.name}</h3>
+              <p className="text-sm text-gray-600">
+                Status: {resort.visited ? 'Visited' : 'Not visited'}
+              </p>
+              {!resort.visited && (
+                <Button 
+                  variant="primary" 
+                  className="mt-2"
+                  onClick={() => handleAddHoliday(resort.id)}
+                >
+                  Add Visit
+                </Button>
+              )}
+            </div>
+          </Popup>
+        </Marker>
         ))}
       </MapContainer>
     </div>
