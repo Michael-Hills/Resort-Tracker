@@ -36,17 +36,17 @@ export default function Sidebar() {
         <nav className="flex-1 space-y-4">
           <Link to="/" className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition">
             <Map className="w-5 h-5" />
-            Map View
-          </Link>
-
-          <Link to="/profile" className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition">
-            <User className="w-5 h-5" />
-            My Profile
+            Map Overview
           </Link>
 
           <Link to="/visited" className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition">
             <Mountain className="w-5 h-5" />
             Visited Resorts
+          </Link>
+
+          <Link to="/profile" className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition">
+            <User className="w-5 h-5" />
+            Profile
           </Link>
         </nav>
 

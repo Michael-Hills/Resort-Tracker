@@ -14,8 +14,8 @@ export default function MapView() {
   ];
 
   const lastItems = [
-    { title: "Last Visit:", text: stats.lastHolidayDate || 'No visits yet' },
-    { title: "Last Resort:", text: stats.lastHolidayResort || 'None' }
+    { text: stats.lastHolidayDate || 'No visits yet' },
+    { text: stats.lastHolidayResort || 'None' }
 
   ];
 
@@ -31,8 +31,10 @@ export default function MapView() {
       </div>
 
       <div className="max-w-6xl mx-auto mt-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 px-4">Last Trip:</h2>
-        <InfoItemSection items={lastItems} />
+        <h2 className="text-2xl font-bold text-gray-800 mb-2 sm:mb-4 px-4">Last Trip:</h2>
+        <InfoItemSection
+        items={lastItems}
+        className= "[&>div]:w-32 [&>div]:sm:w-44 sm:gap-4"/>
       </div>
     </>
   );

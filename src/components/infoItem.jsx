@@ -12,6 +12,6 @@ export default function InfoItem({ title, text }) {
 }
 
 InfoItem.propTypes = {
-  title: PropTypes.string.isRequired, 
+  title: PropTypes.string, 
   text: PropTypes.string.isRequired, 
 };
