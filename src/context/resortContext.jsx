@@ -9,7 +9,8 @@ export function ResortProvider({ children }) {
   const [stats, setStats] = useState({
     resortsVisited: 0,
     countries: 0,
-    totalRuns: 0,
+    lastHolidayDate: null,
+    lastHolidayResort: null,
     favoriteResort: 'None'
   });
 
@@ -25,7 +26,7 @@ export function ResortProvider({ children }) {
     setResorts(resortsData);
     setHolidays(holidaysData);
     const visitedResorts = resortsData.filter(r => r.visited);
-    setStats(calculateStats(visitedResorts));
+    setStats(calculateStats(visitedResorts, holidaysData, resortsData));
   }
 
   async function handleAddHoliday(holiday) {

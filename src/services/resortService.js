@@ -109,14 +109,34 @@ export async function searchResorts(query) {
   );
 }
 
-export function calculateStats(visitedResorts) {
+export function calculateStats(visitedResorts, holidays = [], resorts = []) {
   const countries = new Set(visitedResorts.map(r => r.country));
-  const totalRuns = visitedResorts.reduce((sum, r) => sum + r.runs, 0);
+
+  const visitCounts = holidays.reduce((counts, holiday) => {
+    counts[holiday.resortId] = (counts[holiday.resortId] || 0) + 1;
+    return counts;
+  }, {});
+
+  const mostVisitedResortId = Object.entries(visitCounts)
+    .sort(([, a], [, b]) => b - a)[0]?.[0];
+
+  const favoriteResort = mostVisitedResortId
+    ? resorts.find(r => r.id === mostVisitedResortId)?.name
+    : 'None';
+
+  const lastHoliday = [...holidays].sort((a, b) => 
+    new Date(b.startDate) - new Date(a.startDate)
+  )[0];
+
+  const lastHolidayResort = lastHoliday 
+    ? resorts.find(r => r.id === lastHoliday.resortId)?.name 
+    : 'None';
   
-  return {
-    resortsVisited: visitedResorts.length,
-    countries: countries.size,
-    totalRuns,
-    favoriteResort: visitedResorts.length > 0 ? visitedResorts[0].name : 'None'
-  };
+    return {
+      resortsVisited: visitedResorts.length,
+      countries: countries.size,
+      favoriteResort,
+      lastHolidayDate: lastHoliday ? lastHoliday.startDate : null,
+      lastHolidayResort
+    };
 }
