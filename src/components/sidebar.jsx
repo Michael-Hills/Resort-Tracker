@@ -1,11 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Mountain, Map, User, LogOut, Search, Menu } from "lucide-react";
 import Button from "./button";
 
-
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+
+  const navLinkClass = ({ isActive }) => {
+    const baseClass = "flex items-center gap-3 transition";
+    return isActive 
+      ? `${baseClass} text-blue-600 font-medium`
+      : `${baseClass} text-gray-700 hover:text-blue-600`;
+  };
 
   return (
     <>
@@ -34,20 +40,20 @@ export default function Sidebar() {
         </div>
 
         <nav className="flex-1 space-y-4">
-          <Link to="/" className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition">
+          <NavLink to="/" className={navLinkClass}>
             <Map className="w-5 h-5" />
             Map Overview
-          </Link>
+          </NavLink>
 
-          <Link to="/visited" className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition">
+          <NavLink to="/visited" className={navLinkClass}>
             <Mountain className="w-5 h-5" />
             Visited Resorts
-          </Link>
+          </NavLink>
 
-          <Link to="/profile" className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition">
+          <NavLink to="/profile" className={navLinkClass}>
             <User className="w-5 h-5" />
             Profile
-          </Link>
+          </NavLink>
         </nav>
 
         <Button 

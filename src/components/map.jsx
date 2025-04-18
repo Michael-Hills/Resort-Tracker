@@ -67,19 +67,19 @@ export default function Map() {
     <div className="h-full w-full relative">
       <div className="absolute top-4 right-4 z-[1] flex gap-2">
         <Button 
-          variant={activeRegion === 'world' ? 'primary' : 'default'}
+          variant='default'
           onClick={() => setActiveRegion('world')}
         >
           World
         </Button>
         <Button 
-          variant={activeRegion === 'europe' ? 'primary' : 'default'}
+          variant='default'
           onClick={() => setActiveRegion('europe')}
         >
           Europe
         </Button>
         <Button 
-          variant={activeRegion === 'asia' ? 'primary' : 'default'}
+          variant='default'
           onClick={() => setActiveRegion('asia')}
         >
           Asia
