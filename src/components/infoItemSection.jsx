@@ -3,7 +3,7 @@ import InfoItem from './infoItem';
 
 export default function InfoItemSection({ items }) {
   return (
-    <div className="flex flex-wrap justify-center gap-5 sm:gap-10 mt-6 max-w-6xl mx-auto px-4">
+    <div className="flex flex-wrap justify-start gap-2 sm:gap-10 mt-2 max-w-6xl mx-auto px-4">
       {items.map((item, index) => (
         <InfoItem
           key={index}
