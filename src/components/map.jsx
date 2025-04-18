@@ -1,34 +1,26 @@
+import {useState, useEffect} from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import Button from './button'
-import { useState, useEffect } from 'react'
+import { getVisitedResorts } from '../services/resortService'
 
+
+// Remove default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '/marker-icon-2x.png',
-  iconUrl: '/marker-icon.png',
-  shadowUrl: '/marker-shadow.png',
+
+// Create custom marker icons
+const visitedIcon = L.divIcon({
+  className: 'custom-marker',
+  html: '<div style="width: 16px; height: 16px; background: #3b82f6; border-radius: 50%; border: 2px solid #2563eb;"></div>'
 });
 
-const skiResorts = [
+const unvisitedIcon = L.divIcon({
+  className: 'custom-marker',
+  html: '<div style="width: 16px; height: 16px; border: 2px solid #3b82f6; border-radius: 50%;"></div>'
+});
 
-    {
-        name: "Vail",
-        position: [39.6061, -106.3550],
-        visited: true
-      },
-      {
-        name: "Aspen Snowmass",
-        position: [39.2084, -106.9490],
-        visited: false
-      },
-      {
-        name: "Park City",
-        position: [40.6461, -111.4980],
-        visited: true
-      }
-];
+
 
 const regions = {
   world: {
@@ -58,7 +50,18 @@ function MapController({ region }) {
 }
 
 export default function Map() {
+  const [resorts, setResorts] = useState([]);
   const [activeRegion, setActiveRegion] = useState('world');
+
+
+  useEffect(() => {
+    async function loadResorts() {
+      const data = await getVisitedResorts();
+      setResorts(data);
+    }
+    loadResorts();
+  }, []);
+
   return (
     <div className="h-full w-full relative">
       <div className="absolute top-4 right-4 z-[1] flex gap-2">
@@ -102,16 +105,17 @@ export default function Map() {
         zIndex={1}
         />
                 
-        {skiResorts.map((resort) => (
+        {resorts.map((resorts) => (
           <Marker 
-            key={resort.name}
-            position={resort.position}
+            key={resorts.name}
+            position={resorts.position}
+            icon={resorts.visited ? visitedIcon : unvisitedIcon}
           >
             <Popup>
               <div className="p-2">
-                <h3 className="font-bold">{resort.name}</h3>
+                <h3 className="font-bold">{resorts.name}</h3>
                 <p className="text-sm text-gray-600">
-                  Status: {resort.visited ? 'Visited' : 'Not visited'}
+                  Status: {resorts.visited ? 'Visited' : 'Not visited'}
                 </p>
               </div>
             </Popup>
