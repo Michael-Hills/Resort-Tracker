@@ -18,7 +18,7 @@ export default function InfoItemSection({ items, className= '' }) {
 InfoItemSection.propTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
-      title: PropTypes.string.isRequired,
+      title: PropTypes.string,
       text: PropTypes.string.isRequired
     })
   ).isRequired,

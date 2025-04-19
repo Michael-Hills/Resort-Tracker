@@ -1,10 +1,15 @@
 import MapChart from "../components/map";
 import InfoItemSection from "../components/infoItemSection";
+import PhotoGallery from "../components/photoGallery";
 import { useResorts } from "../context/resortContext";
 
 export default function MapView() {
 
-  const { resorts, stats } = useResorts();
+  const { resorts, stats, holidays } = useResorts();
+
+  const lastHoliday = holidays?.length > 0 
+    ? holidays.sort((a, b) => new Date(b.startDate) - new Date(a.startDate))[0]
+    : null;
   
   const overviewItems = [
     { title: "Resorts:", text: (stats.resortsVisited || 0).toString() },
@@ -31,10 +36,12 @@ export default function MapView() {
       </div>
 
       <div className="max-w-6xl mx-auto mt-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2 sm:mb-4 px-4">Last Trip:</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 px-4">Last Trip:</h2>
         <InfoItemSection
-        items={lastItems}
-        className= "[&>div]:w-32 [&>div]:sm:w-44 sm:gap-4"/>
+          items={lastItems}
+          className="flex flex-row flex-wrap gap-4"
+        />
+        <PhotoGallery photos={lastHoliday?.photos || []} />
       </div>
     </>
   );

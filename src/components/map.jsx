@@ -25,7 +25,7 @@ const unvisitedIcon = L.divIcon({
 const regions = {
   world: {
     center: [20, 0],
-    zoom: window.innerWidth < 640 ? 1 : 2
+    zoom: window.innerWidth < 640 ? 1 : 3
   },
   europe: {
     center: [45, 15],
@@ -101,9 +101,10 @@ export default function Map() {
         center={[20,0]} 
         zoom={window.innerWidth < 640 ? 1 : 2}
         className="h-full w-full z-[0]"
-        maxBounds={[[-85, -200], [85, 200]]}
-        maxBoundsViscosity={0.8}
+        maxBounds={[[-90, -180], [90, 180]]}
+        maxBoundsViscosity={1.0}
         zoomControl={false}
+        minZoom={window.innerWidth < 640 ? 1 : 2}
       >
         <MapControllerWithButtons />
         
@@ -111,7 +112,7 @@ export default function Map() {
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         maxZoom={20}
-        minZoom= {1}
+        minZoom= {window.innerWidth < 640 ? 1 : 2}
         noWrap={true}
         bounds={[[-90, -180], [90, 180]]}
         zIndex={1}

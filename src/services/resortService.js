@@ -76,14 +76,55 @@ const mockHolidays = [
     resortId: 'vail',
     startDate: '2023-12-15',
     endDate: '2023-12-22',
-    notes: 'Amazing powder days'
+    notes: 'Amazing powder days',
+    photos: [
+      {
+        id: 'p4',
+        url: 'https://images.unsplash.com/photo-1612450622914-f748c1e05c78?w=800'
+      },
+      {
+        id: 'p5',
+        url: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=800'
+      }
+    ]
+    
+
+    
   },
   {
     id: '2',
     resortId: 'parkcity',
     startDate: '2024-01-05',
     endDate: '2024-01-12',
-    notes: 'Great spring conditions'
+    notes: 'Great spring conditions',
+    photos: [
+      {
+        id: 'p1',
+        url: 'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=800'
+      },
+      {
+        id: 'p2',
+        url: 'https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=800',
+
+      },
+      {
+        id: 'p3',
+        url: 'https://images.unsplash.com/photo-1613310023042-ad79320c00ff?w=800',
+     
+      },
+      {
+        id: 'p4',
+        url: 'https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=800',
+
+      },
+      {
+        id: 'p5',
+        url: 'https://images.unsplash.com/photo-1613310023042-ad79320c00ff?w=800',
+     
+      }
+    ]
+    
+
   }
 ];
 
@@ -106,7 +147,8 @@ export async function addHoliday(holiday) {
   await new Promise(resolve => setTimeout(resolve, 500));
   const newHoliday = {
     ...holiday,
-    id: crypto.randomUUID()
+    id: crypto.randomUUID(),
+    photos: [],
   };
   mockHolidays.push(newHoliday);
   return newHoliday;
@@ -184,4 +226,45 @@ export function calculateStats(visitedResorts, holidays = [], resorts = []) {
       lastHolidayDate: lastHoliday ? lastHoliday.startDate : null,
       lastHolidayResort
     };
+}
+
+export async function addPhotoToHoliday(holidayId, photoData) {
+  // Simulate API call
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  const holiday = mockHolidays.find(h => h.id === holidayId);
+  if (!holiday) {
+    throw new Error('Holiday not found');
+  }
+
+  if (holiday.photos.length >= 5) {
+    throw new Error('Maximum 5 photos allowed per holiday');
+  }
+
+  const newPhoto = {
+    id: crypto.randomUUID(),
+    url: photoData.url,
+    caption: photoData.caption
+  };
+
+  holiday.photos.push(newPhoto);
+  return newPhoto;
+}
+
+export async function removePhotoFromHoliday(holidayId, photoId) {
+  // Simulate API call
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  const holiday = mockHolidays.find(h => h.id === holidayId);
+  if (!holiday) {
+    throw new Error('Holiday not found');
+  }
+
+  const photoIndex = holiday.photos.findIndex(p => p.id === photoId);
+  if (photoIndex === -1) {
+    throw new Error('Photo not found');
+  }
+
+  holiday.photos.splice(photoIndex, 1);
+  return holiday;
 }
