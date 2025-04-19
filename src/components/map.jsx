@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import {useEffect} from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
@@ -25,7 +25,7 @@ const unvisitedIcon = L.divIcon({
 const regions = {
   world: {
     center: [20, 0],
-    zoom: 2
+    zoom: window.innerWidth < 640 ? 1 : 2
   },
   europe: {
     center: [45, 15],
@@ -37,16 +37,37 @@ const regions = {
   }
 };
 
-function MapController({ region }) {
+
+function RegionButtons({ map }) {
+  const handleRegionClick = (region) => {
+    const { center, zoom } = regions[region];
+    map.flyTo(center, zoom, {
+      duration: 1.5,
+      easeLinearity: 0.25
+    });
+  };
+
+  return (
+    <div className="absolute top-4 right-4 z-[1000] flex gap-2">
+      {Object.keys(regions).map((region) => (
+        <Button
+          key={region}
+          onClick={() => handleRegionClick(region)}
+          className="capitalize"
+        >
+          {region}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
+function MapControllerWithButtons() {
   const map = useMap();
   
   useEffect(() => {
-    if (region) {
-      map.flyTo(regions[region].center, regions[region].zoom);
-    }
-
     const handleCenterOnResort = (event) => {
-      const { position, _ } = event.detail;
+      const { position } = event.detail;
       map.flyTo(position, 8, {
         duration: 1.5,
         easeLinearity: 0.25
@@ -55,15 +76,14 @@ function MapController({ region }) {
 
     window.addEventListener('map:centerOnResort', handleCenterOnResort);
     return () => window.removeEventListener('map:centerOnResort', handleCenterOnResort);
-  }, [region, map]);
+  }, [map]);
 
-  return null;
+  return <RegionButtons map={map} />;
 }
 
 export default function Map() {
 
   const { resorts, addHoliday } = useResorts();
-  const [activeRegion, setActiveRegion] = useState('world');
 
   const handleAddHoliday = async (resortId) => {
     await addHoliday({
@@ -76,42 +96,22 @@ export default function Map() {
 
   return (
     <div className="h-full w-full relative">
-      <div className="absolute top-4 right-4 z-[1] flex gap-2">
-        <Button 
-          variant='default'
-          onClick={() => setActiveRegion('world')}
-        >
-          World
-        </Button>
-        <Button 
-          variant='default'
-          onClick={() => setActiveRegion('europe')}
-        >
-          Europe
-        </Button>
-        <Button 
-          variant='default'
-          onClick={() => setActiveRegion('asia')}
-        >
-          Asia
-        </Button>
-      </div>
 
       <MapContainer 
-        center={regions.world.center} 
-        zoom={regions.world.zoom} 
+        center={[20,0]} 
+        zoom={window.innerWidth < 640 ? 1 : 2}
         className="h-full w-full z-[0]"
-        maxBounds={[[-90, -180], [90, 180]]}
-        maxBoundsViscosity={1.0}
+        maxBounds={[[-85, -200], [85, 200]]}
+        maxBoundsViscosity={0.8}
         zoomControl={false}
       >
-        <MapController region={activeRegion} />
+        <MapControllerWithButtons />
         
         <TileLayer
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         maxZoom={20}
-        minZoom= {2}
+        minZoom= {1}
         noWrap={true}
         bounds={[[-90, -180], [90, 180]]}
         zIndex={1}
