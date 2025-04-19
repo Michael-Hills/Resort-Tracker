@@ -45,14 +45,16 @@ function MapController({ region }) {
       map.flyTo(regions[region].center, regions[region].zoom);
     }
 
-    // Add event listener here instead
     const handleCenterOnResort = (event) => {
-      const { position } = event.detail;
-      map.flyTo(position, 8);
+      const { position, _ } = event.detail;
+      map.flyTo(position, 8, {
+        duration: 1.5,
+        easeLinearity: 0.25
+      });
     };
 
-    window.addEventListener('centerOnResort', handleCenterOnResort);
-    return () => window.removeEventListener('centerOnResort', handleCenterOnResort);
+    window.addEventListener('map:centerOnResort', handleCenterOnResort);
+    return () => window.removeEventListener('map:centerOnResort', handleCenterOnResort);
   }, [region, map]);
 
   return null;

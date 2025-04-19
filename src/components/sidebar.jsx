@@ -2,49 +2,42 @@ import { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate} from "react-router-dom";
 import { Mountain, Map, User, LogOut, Search, Menu } from "lucide-react";
 import Button from "./button";
-import { searchResorts } from "../services/resortService";
+import { useResorts } from "../context/resortContext";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [_, setIsSearching] = useState(false);
   const searchRef = useRef(null);
   const navigate = useNavigate();
+  const { resorts } = useResorts();
 
   // Debounced search
 
   useEffect(() => {
-    const timeoutId = setTimeout(async () => {
-      if (searchTerm.trim()) {
-        const results = await searchResorts(searchTerm);
-        setSearchResults(results);
-      } else {
-        const allResorts = await searchResorts(''); // This will return all resorts
-        setSearchResults(allResorts);
-      }
+    const timeoutId = setTimeout(() => {
+      setIsSearching(true);
+      const filtered = resorts.filter(resort => 
+        resort.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        resort.country.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setSearchResults(searchTerm.trim() ? filtered : resorts);
+      setIsSearching(false);
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
-  
-
-  // Click outside handler
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setShowResults(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [searchTerm, resorts]);
 
   const handleResortSelect = (resort) => {
     navigate('/');
-    const event = new CustomEvent('centerOnResort', { 
-      detail: { position: resort.position }
+    // Using a more specific event name
+    const event = new CustomEvent('map:centerOnResort', { 
+      detail: { 
+        position: resort.position,
+        resortId: resort.id 
+      }
     });
     window.dispatchEvent(event);
     setSearchTerm("");
