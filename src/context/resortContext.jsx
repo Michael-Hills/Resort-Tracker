@@ -35,12 +35,22 @@ export function ResortProvider({ children }) {
     await loadData(); // Refresh all data to ensure consistency
   }
 
+  async function updateHolidayPhotos(holidayId) {
+    const updatedHolidays = await fetchHolidays();
+    const updatedHoliday = updatedHolidays.find(h => h.id === holidayId);
+    
+    setHolidays(prev => prev.map(h => 
+      h.id === holidayId ? updatedHoliday : h
+    ));
+  }
+
   const value = {
     resorts,
     holidays,
     stats,
     addHoliday: handleAddHoliday,
-    refreshData: loadData
+    refreshData: loadData,
+    updateHolidayPhotos
   };
 
   return (

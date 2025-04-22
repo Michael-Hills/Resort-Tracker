@@ -117,11 +117,7 @@ const mockHolidays = [
         url: 'https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=800',
 
       },
-      {
-        id: 'p5',
-        url: 'https://images.unsplash.com/photo-1613310023042-ad79320c00ff?w=800',
      
-      }
     ]
     
 

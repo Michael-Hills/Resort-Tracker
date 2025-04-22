@@ -1,16 +1,21 @@
 import MapChart from "../components/map";
 import InfoItemSection from "../components/infoItemSection";
 import PhotoGallery from "../components/photoGallery";
-import { useResorts } from "../context/resortContext";
+import { useResorts} from "../context/resortContext";
 
 export default function MapView() {
 
-  const { resorts, stats, holidays } = useResorts();
+  const { resorts, holidays, stats, updateHolidayPhotos } = useResorts();
 
   const lastHoliday = holidays?.length > 0 
     ? holidays.sort((a, b) => new Date(b.startDate) - new Date(a.startDate))[0]
     : null;
   
+    const handlePhotoAdded = async () => {
+      if (lastHoliday?.id) {
+        await updateHolidayPhotos(lastHoliday.id);
+      }
+    };
   const overviewItems = [
     { title: "Resorts:", text: (stats.resortsVisited || 0).toString() },
     { title: "Countries:", text: (stats.countries || 0).toString() },
@@ -41,7 +46,11 @@ export default function MapView() {
           items={lastItems}
           className="flex flex-row flex-wrap gap-4"
         />
-        <PhotoGallery photos={lastHoliday?.photos || []} />
+        <PhotoGallery 
+          photos={lastHoliday?.photos || []} 
+          holidayId={lastHoliday?.id}
+          onPhotoAdded={handlePhotoAdded}
+      />
       </div>
     </>
   );
