@@ -25,7 +25,7 @@ const unvisitedIcon = L.divIcon({
 const regions = {
   world: {
     center: [20, 0],
-    zoom: window.innerWidth < 640 ? 1 : 3
+    zoom: window.innerWidth < 640 ? 1 : 2
   },
   europe: {
     center: [45, 15],
@@ -83,7 +83,11 @@ function MapControllerWithButtons() {
 
 export default function Map() {
 
-  const { resorts, addHoliday } = useResorts();
+  const { resorts, addHoliday, holidays} = useResorts();
+
+  const getHolidayCount = (resortId) => {
+    return holidays.filter(h => h.resortId === resortId).length;
+  };
 
   const handleAddHoliday = async (resortId) => {
     await addHoliday({
@@ -130,6 +134,11 @@ export default function Map() {
               <p className="text-sm text-gray-600">
                 Status: {resort.visited ? 'Visited' : 'Not visited'}
               </p>
+              {resort.visited && (
+                <p className="text-sm text-gray-600">
+                  Visits: {getHolidayCount(resort.id)}
+                </p>
+              )}
               {!resort.visited && (
                 <Button 
                   variant="primary" 
