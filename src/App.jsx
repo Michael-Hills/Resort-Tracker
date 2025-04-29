@@ -1,9 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
 import { ResortProvider } from './context/resortContext';
 import Sidebar from './components/sidebar';
-import MapView from './pages/MapView'
-import Profile from './pages/Profile'
-import Visited from './pages/Visited'
+import MapView from './pages/MapView';
+import Profile from './pages/Profile';
+import Visited from './pages/Visited';
+import Gallery from './pages/Gallery';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Route path="/" element={<MapView/>} />
             <Route path="/profile" element={<Profile/>} />
             <Route path="/visited" element={<Visited/>} />
+            <Route path="/gallery" element={<Gallery/>} />
           </Routes>
         </main>
       </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate} from "react-router-dom";
-import { Mountain, Map, User, LogOut, Search, Menu } from "lucide-react";
+import { Mountain, Map, User, LogOut, Search, Menu, Images } from "lucide-react";
 import Button from "./button";
 import { useResorts } from "../context/resortContext";
 
@@ -106,6 +106,11 @@ export default function Sidebar() {
           <NavLink to="/visited" className={navLinkClass}>
             <Mountain className="w-5 h-5" />
             Visited Resorts
+          </NavLink>
+
+          <NavLink to="/gallery" className={navLinkClass}>
+            <Images className="w-5 h-5" />
+            Gallery
           </NavLink>
 
           <NavLink to="/profile" className={navLinkClass}>

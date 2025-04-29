@@ -4,7 +4,6 @@ import { Plus } from 'lucide-react';
 import { addPhotoToHoliday } from '../services/resortService';
 
 const getImageSize = (photoCount) => {
-    if (photoCount <= 1) return 'h-24 w-24 sm:h-48 sm:w-48';
     if (photoCount <= 2) return 'h-20 w-20 sm:h-40 sm:w-40';
     if (photoCount <= 3) return 'h-16 w-16 sm:h-32 sm:w-32';
     return 'h-14 w-14 sm:h-32 sm:w-32'; 
@@ -76,14 +75,13 @@ export default function PhotoGallery({ photos, holidayId, onPhotoAdded }) {
     input.click();
   };
 
-  if (!photos?.length) return null;
   const imageSize = getImageSize(photos.length);
 
   return (
     <>
       <div className="w-full max-w-full overflow-hidden">
         <div className="flex gap-1 sm:gap-4 mt-6 pb-4 overflow-x-auto snap-x snap-mandatory no-scrollbar justify-center">
-            {photos.map((photo) => (
+            {photos?.map((photo) => (
             <button
                 key={photo.id}
                 onClick={() => setSelectedPhoto(photo)}
@@ -97,7 +95,7 @@ export default function PhotoGallery({ photos, holidayId, onPhotoAdded }) {
             </button>
             ))}
 
-            {photos.length < 5 && (
+            {(!photos || photos.length < 5) && (
               <button
                 onClick={handleAddPhoto}
                 className={`${imageSize} flex-shrink-0 rounded-lg border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors flex items-center justify-center bg-gray-50 hover:bg-gray-100`}
@@ -139,6 +137,6 @@ PhotoGallery.propTypes = {
     id: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired
   })).isRequired,
-  holidayId: PropTypes.string.isRequired,
+  holidayId: PropTypes.string,
   onPhotoAdded: PropTypes.func
 };
