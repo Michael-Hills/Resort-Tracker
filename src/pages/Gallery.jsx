@@ -1,5 +1,145 @@
+import { useState } from 'react';
+import { useResorts } from '../context/resortContext';
+import PhotoGallery from '../components/photoGallery';
+import Button from '../components/button';
+
 export default function Gallery() {
-    return (
-      <div>Gallery Page</div>
-    )
-  }
+  const { holidays, resorts, updateHolidayPhotos } = useResorts();
+  const [filters, setFilters] = useState({
+    resort: '',
+    country: '',
+    dateRange: 'all'
+  });
+  const [sortBy, setSortBy] = useState('date-desc');
+
+  const handleClearFilters = () => {
+    setFilters({
+      resort: '',
+      country: '',
+      dateRange: 'all'
+    });
+    setSortBy('date-desc');
+  };
+
+  const countries = [...new Set(resorts.map(r => r.country))];
+  const resortNames = resorts.map(r => ({ id: r.id, name: r.name }));
+
+  const filteredHolidays = holidays
+    .filter(holiday => {
+      const resort = resorts.find(r => r.id === holiday.resortId);
+      if (!resort) return false;
+
+      const matchesResort = !filters.resort || holiday.resortId === filters.resort;
+      const matchesCountry = !filters.country || resort.country === filters.country;
+      
+      if (filters.dateRange === 'last-year') {
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        const holidayDate = new Date(holiday.startDate);
+        return matchesResort && matchesCountry && holidayDate >= oneYearAgo;
+      }
+      
+      return matchesResort && matchesCountry;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'date-asc':
+          return new Date(a.startDate) - new Date(b.startDate);
+        case 'date-desc':
+          return new Date(b.startDate) - new Date(a.startDate);
+        default:
+          return 0;
+      }
+    });
+  
+  return (
+    <div className="w-full mx-auto px-0.5 sm:px-2 max-w-7xl">
+      <div className="flex justify-end mb-2">
+        <Button 
+          onClick={handleClearFilters}
+          variant="default"
+          className="text-xs sm:text-sm"
+        >
+          Clear Filters
+        </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 sm:gap-2 mb-4 sm:mb-8 bg-white p-1 sm:p-2 rounded-lg shadow">
+        <select
+          value={filters.resort}
+          onChange={(e) => setFilters(prev => ({ ...prev, resort: e.target.value }))}
+          className="border rounded px-1 py-0.5 sm:p-1.5 text-xs sm:text-sm w-full min-w-0"
+        >
+          <option value="">All Resorts</option>
+          {resortNames.map(resort => (
+            <option key={resort.id} value={resort.id}>
+              {resort.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={filters.country}
+          onChange={(e) => setFilters(prev => ({ ...prev, country: e.target.value }))}
+          className="border rounded px-1 py-0.5 sm:p-1.5 text-xs sm:text-sm w-full min-w-0"
+        >
+          <option value="">All Countries</option>
+          {countries.map(country => (
+            <option key={country} value={country}>
+              {country}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={filters.dateRange}
+          onChange={(e) => setFilters(prev => ({ ...prev, dateRange: e.target.value }))}
+          className="border rounded px-1 py-0.5 sm:p-1.5 text-xs sm:text-sm w-full min-w-0"
+        >
+          <option value="all">All Time</option>
+          <option value="last-year">Last Year</option>
+        </select>
+
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="border rounded px-1 py-0.5 sm:p-1.5 text-xs sm:text-sm w-full min-w-0"
+        >
+          <option value="date-desc">Newest First</option>
+          <option value="date-asc">Oldest First</option>
+        </select>
+      </div>
+
+      {/* Holiday Cards */}
+      <div className="space-y-2 sm:space-y-4">
+        {filteredHolidays.map(holiday => {
+          const resort = resorts.find(r => r.id === holiday.resortId);
+          return (
+            <div key={holiday.id} className="bg-white rounded-lg shadow-md p-1 sm:p-4">
+              <div className="mb-1 sm:mb-4">
+                <h2 className="text-sm sm:text-lg font-semibold">{resort?.name}</h2>
+                <p className="text-xs sm:text-sm text-gray-600">
+                  {new Date(holiday.startDate).toLocaleDateString()} - {new Date(holiday.endDate).toLocaleDateString()}
+                </p>
+                <p className="text-xs sm:text-sm text-gray-500">{resort?.country}</p>
+              </div>
+              
+              <PhotoGallery 
+                photos={holiday.photos || []}
+                holidayId={holiday.id}
+                onPhotoAdded={() => updateHolidayPhotos(holiday.id)}
+              />
+            </div>
+          );
+        })}
+
+        {filteredHolidays.length === 0 && (
+          <div className="text-center text-gray-500 py-2 sm:py-4">
+            No holidays found matching your filters
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
