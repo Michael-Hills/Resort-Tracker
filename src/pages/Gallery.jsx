@@ -10,7 +10,7 @@ export default function Gallery() {
   const [filters, setFilters] = useState({
     resort: '',
     country: '',
-    dateRange: 'all'
+    year: 'all'
   });
   const [sortBy, setSortBy] = useState('date-desc');
 
@@ -18,7 +18,7 @@ export default function Gallery() {
     setFilters({
       resort: '',
       country: '',
-      dateRange: 'all'
+      year: 'all'  // Updated from dateRange to year
     });
     setSortBy('date-desc');
   };
@@ -30,6 +30,9 @@ export default function Gallery() {
 
   const countries = [...new Set(resorts.map(r => r.country))];
   const resortNames = resorts.map(r => ({ id: r.id, name: r.name }));
+  const years = [...new Set(holidays.map(h => 
+    new Date(h.startDate).getFullYear()
+  ))].sort((a, b) => b - a);
 
   const filteredHolidays = holidays
     .filter(holiday => {
@@ -39,11 +42,9 @@ export default function Gallery() {
       const matchesResort = !filters.resort || holiday.resortId === filters.resort;
       const matchesCountry = !filters.country || resort.country === filters.country;
       
-      if (filters.dateRange === 'last-year') {
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-        const holidayDate = new Date(holiday.startDate);
-        return matchesResort && matchesCountry && holidayDate >= oneYearAgo;
+      if (filters.year !== 'all') {
+        const holidayYear = new Date(holiday.startDate).getFullYear().toString();
+        return matchesResort && matchesCountry && holidayYear === filters.year;
       }
       
       return matchesResort && matchesCountry;
@@ -99,12 +100,16 @@ export default function Gallery() {
         </select>
 
         <select
-          value={filters.dateRange}
-          onChange={(e) => setFilters(prev => ({ ...prev, dateRange: e.target.value }))}
+          value={filters.year}
+          onChange={(e) => setFilters(prev => ({ ...prev, year: e.target.value }))}
           className="border rounded px-1 py-0.5 sm:p-1.5 text-xs sm:text-sm w-full min-w-0"
         >
-          <option value="all">All Time</option>
-          <option value="last-year">Last Year</option>
+          <option value="all">All Years</option>
+          {years.map(year => (
+            <option key={year} value={year.toString()}>
+              {year}
+            </option>
+          ))}
         </select>
 
         <select
