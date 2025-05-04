@@ -144,7 +144,7 @@ export async function addHoliday(holiday) {
   const newHoliday = {
     ...holiday,
     id: crypto.randomUUID(),
-    photos: [],
+    photos: holiday.photos || [],
   };
   mockHolidays.push(newHoliday);
   return newHoliday;

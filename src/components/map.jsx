@@ -1,9 +1,10 @@
-import {useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import Button from './button'
 import { useResorts } from '../context/resortContext'
+import HolidayForm from './holidayForm';
 
 
 // Remove default marker icons
@@ -84,19 +85,23 @@ function MapControllerWithButtons() {
 export default function Map() {
 
   const { resorts, addHoliday, holidays} = useResorts();
+  const [showHolidayForm, setShowHolidayForm] = useState(false);
+  const [selectedResortId, setSelectedResortId] = useState(null);
+
+  const handleShowForm = (resortId) => {
+    setSelectedResortId(resortId);
+    setShowHolidayForm(true);
+  };
+
+  const handleAddHoliday = async (holidayData) => {
+    await addHoliday(holidayData);
+    setShowHolidayForm(false);
+  };
 
   const getHolidayCount = (resortId) => {
     return holidays.filter(h => h.resortId === resortId).length;
   };
 
-  const handleAddHoliday = async (resortId) => {
-    await addHoliday({
-      resortId,
-      startDate: new Date().toISOString().split('T')[0],
-      endDate: new Date().toISOString().split('T')[0],
-      notes: 'New visit'
-    });
-  };
 
   return (
     <div className="h-full w-full relative">
@@ -123,36 +128,41 @@ export default function Map() {
         />
                 
         {resorts.map((resort) => (
-        <Marker 
-          key={resort.name}
-          position={resort.position}
-          icon={resort.visited ? visitedIcon : unvisitedIcon}
-        >
-          <Popup>
-            <div className="p-2">
-              <h3 className="font-bold">{resort.name}</h3>
-              <p className="text-sm text-gray-600">
-                Status: {resort.visited ? 'Visited' : 'Not visited'}
-              </p>
-              {resort.visited && (
+          <Marker key={resort.name} position={resort.position} icon={resort.visited ? visitedIcon : unvisitedIcon}>
+            <Popup>
+              <div className="p-2">
+                <h3 className="font-bold">{resort.name}</h3>
                 <p className="text-sm text-gray-600">
-                  Visits: {getHolidayCount(resort.id)}
+                  Status: {resort.visited ? 'Visited' : 'Not visited'}
                 </p>
-              )}
-              {!resort.visited && (
-                <Button 
-                  variant="primary" 
-                  className="mt-2"
-                  onClick={() => handleAddHoliday(resort.id)}
-                >
-                  Add Visit
-                </Button>
-              )}
-            </div>
-          </Popup>
-        </Marker>
+                {resort.visited && (
+                  <p className="text-sm text-gray-600">
+                    Visits: {getHolidayCount(resort.id)}
+                  </p>
+                )}
+                {!resort.visited && (
+                  <Button 
+                    variant="primary" 
+                    className="mt-2"
+                    onClick={() => handleShowForm(resort.id)}
+                  >
+                    Add Holiday
+                  </Button>
+                )}
+              </div>
+            </Popup>
+          </Marker>
         ))}
       </MapContainer>
+
+      {showHolidayForm && (
+        <HolidayForm
+          resorts={resorts}
+          initialResortId={selectedResortId}
+          onSubmit={handleAddHoliday}
+          onCancel={() => setShowHolidayForm(false)}
+        />
+      )}
     </div>
   )
 }

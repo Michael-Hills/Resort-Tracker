@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState} from 'react';
 import { useResorts } from '../context/resortContext';
 import PhotoGallery from '../components/photoGallery';
 import Button from '../components/button';
+import HolidayForm from '../components/holidayForm';
 
 export default function Gallery() {
-  const { holidays, resorts, updateHolidayPhotos } = useResorts();
+  const { holidays, resorts, updateHolidayPhotos, addHoliday } = useResorts();
+  const [showHolidayForm, setShowHolidayForm] = useState(false);
   const [filters, setFilters] = useState({
     resort: '',
     country: '',
@@ -19,6 +21,11 @@ export default function Gallery() {
       dateRange: 'all'
     });
     setSortBy('date-desc');
+  };
+
+  const handleAddHoliday = async (holidayData) => {
+    await addHoliday(holidayData);
+    setShowHolidayForm(false);
   };
 
   const countries = [...new Set(resorts.map(r => r.country))];
@@ -54,15 +61,14 @@ export default function Gallery() {
   
   return (
     <div className="w-full mx-auto px-0.5 sm:px-2 max-w-7xl">
-      <div className="flex justify-end mb-2">
-        <Button 
-          onClick={handleClearFilters}
-          variant="default"
-          className="text-xs sm:text-sm"
-        >
-          Clear Filters
-        </Button>
-      </div>
+      {showHolidayForm && (
+        <HolidayForm
+          resorts={resorts}
+          onSubmit={handleAddHoliday}
+          onCancel={() => setShowHolidayForm(false)}
+        />
+      )}
+
 
       {/* Filters */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 sm:gap-2 mb-4 sm:mb-8 bg-white p-1 sm:p-2 rounded-lg shadow">
@@ -109,6 +115,23 @@ export default function Gallery() {
           <option value="date-desc">Newest First</option>
           <option value="date-asc">Oldest First</option>
         </select>
+      </div>
+
+      <div className="flex justify-between mb-4">
+        <Button 
+          onClick={() => setShowHolidayForm(true)}
+          variant="primary"
+          className="text-xs sm:text-sm"
+        >
+          Add Holiday
+        </Button>
+        <Button 
+          onClick={handleClearFilters}
+          variant="default"
+          className="text-xs sm:text-sm"
+        >
+          Clear Filters
+        </Button>
       </div>
 
       {/* Holiday Cards */}
