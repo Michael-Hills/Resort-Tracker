@@ -102,6 +102,14 @@ export default function Map() {
     return holidays.filter(h => h.resortId === resortId).length;
   };
 
+  
+  const getLastVisit = (resortId) => {
+    return holidays
+      .filter(h => h.resortId === resortId)
+      .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))[0]?.startDate;
+  };
+
+
 
   return (
     <div className="h-full w-full relative">
@@ -126,39 +134,45 @@ export default function Map() {
         bounds={[[-90, -180], [90, 180]]}
         zIndex={1}
         />
-                
-        {resorts.map((resort) => (
-          <Marker key={resort.name} position={resort.position} icon={resort.visited ? visitedIcon : unvisitedIcon}>
-            <Popup>
-              <div className="p-2">
-                <h3 className="font-bold">{resort.name}</h3>
-                <p className="text-sm text-gray-600">
-                  Status: {resort.visited ? 'Visited' : 'Not visited'}
-                </p>
-                {resort.visited && (
-                  <p className="text-sm text-gray-600">
+      
+      {resorts.map((resort) => (
+        <Marker key={resort.name} position={resort.position} icon={resort.visited ? visitedIcon : unvisitedIcon}>
+          <Popup>
+            <div className="space-y-0.5">
+              <h3 className="text-lg font-bold mb-2">{resort.name}</h3>
+              <p className="text-xs text-gray-600">
+                Status: {resort.visited ? 'Visited' : 'Not visited'}
+              </p>
+              {resort.visited && (
+                <>
+                  <p className="text-xs text-gray-600">
                     Visits: {getHolidayCount(resort.id)}
                   </p>
-                )}
-                {!resort.visited && (
-                  <Button 
-                    variant="primary" 
-                    className="mt-2"
-                    onClick={() => handleShowForm(resort.id)}
-                  >
-                    Add Holiday
-                  </Button>
-                )}
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+                  <p className="text-xs text-gray-600">
+                    Last Visit: {new Date(getLastVisit(resort.id)).toLocaleDateString()}
+                  </p>
+                </>
+              )}
+
+            </div>
+              <Button 
+                variant="primary" 
+                className="text-xs mt-3"
+                onClick={() => handleShowForm(resort.id)}
+              >
+                Add Holiday
+              </Button>
+            
+          </Popup>
+        </Marker>
+      ))}
       </MapContainer>
 
       {showHolidayForm && (
         <HolidayForm
           resorts={resorts}
           initialResortId={selectedResortId}
+          hideResortSelector={true}  // Add this prop
           onSubmit={handleAddHoliday}
           onCancel={() => setShowHolidayForm(false)}
         />

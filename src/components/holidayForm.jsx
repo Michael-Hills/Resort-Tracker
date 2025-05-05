@@ -3,9 +3,10 @@ import Button from './button';
 import PropTypes from 'prop-types';
 import { Plus, X } from 'lucide-react';
 
-export default function HolidayForm({ resorts, onSubmit, onCancel }) {
+export default function HolidayForm({resorts, onSubmit, onCancel,
+  initialResortId = '', hideResortSelector = false}) {
   const [formData, setFormData] = useState({
-    resortId: '',
+    resortId: initialResortId,
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date().toISOString().split('T')[0],
     notes: '',
@@ -48,30 +49,31 @@ export default function HolidayForm({ resorts, onSubmit, onCancel }) {
   };
 
   return (
+
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">Add New Holiday</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Existing form fields */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Resort
-            </label>
-            <select
-              value={formData.resortId}
-              onChange={(e) => setFormData(prev => ({ ...prev, resortId: e.target.value }))}
-              className="w-full border rounded-md p-2"
-              required
-            >
-              <option value="">Select a resort</option>
-              {resorts.map(resort => (
-                <option key={resort.id} value={resort.id}>
-                  {resort.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
+          {!hideResortSelector && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Resort
+              </label>
+              <select
+                value={formData.resortId}
+                onChange={(e) => setFormData(prev => ({ ...prev, resortId: e.target.value }))}
+                className="w-full border rounded-md p-2"
+                required
+              >
+                <option value="">Select a resort</option>
+                {resorts.map(resort => (
+                  <option key={resort.id} value={resort.id}>
+                    {resort.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -165,5 +167,7 @@ HolidayForm.propTypes = {
     name: PropTypes.string.isRequired
   })).isRequired,
   onSubmit: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired
+  onCancel: PropTypes.func.isRequired,
+  initialResortId: PropTypes.string,
+  hideResortSelector: PropTypes.bool
 };
