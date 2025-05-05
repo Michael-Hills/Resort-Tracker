@@ -3,6 +3,7 @@ import { useResorts } from '../context/resortContext';
 import PhotoGallery from '../components/photoGallery';
 import Button from '../components/button';
 import HolidayForm from '../components/holidayForm';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function Gallery() {
   const { holidays, resorts, updateHolidayPhotos, addHoliday } = useResorts();
@@ -13,6 +14,7 @@ export default function Gallery() {
     year: 'all'
   });
   const [sortBy, setSortBy] = useState('date-desc');
+  const [expandedHolidays, setExpandedHolidays] = useState(new Set());
 
   const handleClearFilters = () => {
     setFilters({
@@ -21,6 +23,18 @@ export default function Gallery() {
       year: 'all'  // Updated from dateRange to year
     });
     setSortBy('date-desc');
+  };
+
+  const toggleHoliday = (holidayId) => {
+    setExpandedHolidays(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(holidayId)) {
+        newSet.delete(holidayId);
+      } else {
+        newSet.add(holidayId);
+      }
+      return newSet;
+    });
   };
 
   const handleAddHoliday = async (holidayData) => {
@@ -140,27 +154,48 @@ export default function Gallery() {
       </div>
 
       {/* Holiday Cards */}
+
       <div className="space-y-2 sm:space-y-4">
         {filteredHolidays.map(holiday => {
           const resort = resorts.find(r => r.id === holiday.resortId);
+          const isExpanded = expandedHolidays.has(holiday.id);
+
           return (
             <div key={holiday.id} className="bg-white rounded-lg shadow-md p-1 sm:p-4">
-              <div className="mb-1 sm:mb-4">
-                <h2 className="text-sm sm:text-lg font-semibold">{resort?.name}</h2>
-                <p className="text-xs sm:text-sm text-gray-600">
-                  {new Date(holiday.startDate).toLocaleDateString()} - {new Date(holiday.endDate).toLocaleDateString()}
-                </p>
-                <p className="text-xs sm:text-sm text-gray-500">{resort?.country}</p>
+              <div className="flex justify-between items-center mb-1 sm:mb-4">
+                <div>
+                  <h2 className="text-sm sm:text-lg font-semibold">{resort?.name}</h2>
+                  <p className="text-xs sm:text-sm text-gray-600">
+                    {new Date(holiday.startDate).toLocaleDateString()} - {new Date(holiday.endDate).toLocaleDateString()}
+                  </p>
+                </div>
+                <Button
+                  onClick={() => toggleHoliday(holiday.id)}
+                  className="p-1"
+                >
+                  {isExpanded ? (
+                    <ChevronUp className="w-5 h-5" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5" />
+                  )}
+                </Button>
               </div>
-              
-              <PhotoGallery 
-                photos={holiday.photos || []}
-                holidayId={holiday.id}
-                onPhotoAdded={() => updateHolidayPhotos(holiday.id)}
-              />
+
+              {isExpanded && (
+                <>
+                  <p className="text-xs sm:text-sm text-gray-500 mb-2">{resort?.country}</p>
+                  <PhotoGallery 
+                    photos={holiday.photos || []}
+                    holidayId={holiday.id}
+                    onPhotoAdded={() => updateHolidayPhotos(holiday.id)}
+                    variant='gallery'
+                  />
+                </>
+              )}
             </div>
           );
         })}
+      
 
         {filteredHolidays.length === 0 && (
           <div className="text-center text-gray-500 py-2 sm:py-4">
